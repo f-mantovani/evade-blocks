@@ -12,6 +12,33 @@ class Game {
     this.moveObstacles()
   }
 
+  detectCollision(obstacle) {
+    const player = this.player.domElement.getBoundingClientRect()
+    const obstacleInstance = obstacle.domElement.getBoundingClientRect()
+
+    if (
+      player.top < obstacleInstance.bottom &&
+      player.left < obstacleInstance.right &&
+      player.right > obstacleInstance.left &&
+      player.bottom > obstacleInstance.top
+
+    ) {
+      clearInterval(this.moveInterval)
+      alert('You crashed')
+      window.location.reload()
+    } 
+
+  }
+
+  moveObstacles() {
+    this.moveInterval = setInterval(() => {
+      this.obstacles.forEach((obstacle) => {
+        obstacle.moveDown()
+        this.detectCollision(obstacle)
+      })
+    }, 60)
+  }
+
   attachEventListeners() {
     window.addEventListener('keydown', (event) => {
       const input = event.key
@@ -23,19 +50,11 @@ class Game {
     })
   }
 
-  moveObstacles() {
-    setInterval(() => {
-      this.obstacles.forEach((obstacle) => {
-        obstacle.moveDown()
-      })
-    }, 60)
-  }
-
   createObstacles() {
     setInterval(() => {
       const obstacle = new Obstacle()
       this.obstacles.push(obstacle)
-    }, 1000)
+    },1000)
   }
 }
 
@@ -101,8 +120,6 @@ class Obstacle {
     this.domElement.style.bottom = `${this.positionY}vh` 
   }
 }
-
-
 
 
 
